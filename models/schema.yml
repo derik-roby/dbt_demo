@@ -1,0 +1,39 @@
+version: 2
+models:
+- name: stg_l1_calendar
+  description: This is a description for layer1 listing calendar table
+  columns:
+    - name: listing_id
+      description: This is the description for listing ID column.
+      tests:
+        - unique
+        - not_null
+        - relationships:
+            to: ref('stg_l1_listings')
+            field: id   
+            config:
+              severity: warn
+- name: mart_calendar
+  description: Main calendar table that needs to be queried for reporting.
+  tests:
+    - dbt_expectations.expect_table_row_count_to_equal_other_table:
+        compare_model: ref("stg_l1_calendar")
+- name: mart_listings
+  description: Main listings table that needs to be queried for reporting.
+  tests:
+    - dbt_expectations.expect_table_row_count_to_equal_other_table:
+        compare_model: ref("stg_l1_listings")
+  columns:
+    - name: price
+      description: Gives the price per night for the listings
+      tests:
+        - dbt_expectations.expect_column_quantile_values_to_be_between:
+            quantile: .95
+            min_value: 15 # (Optional)
+            max_value: 500 # (Optional)
+        - dbt_expectations.expect_column_max_to_be_between:
+            max_value: 5000 # (Optional)
+            config:
+              severity: warn
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: numeric
