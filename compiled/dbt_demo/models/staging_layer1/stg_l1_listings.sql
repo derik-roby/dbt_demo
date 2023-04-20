@@ -1,0 +1,12 @@
+WITH stg_l1_listings AS (
+    select * from "dbt_demo"."raw"."raw_listings"
+)
+select id,listing_url,scrape_id,to_date(last_scraped,'YYYY-MM-DD') as last_scraped,"source","name",description,neighborhood_overview,picture_url,host_id,host_url,host_name,to_date(host_since,'YYYY-MM-DD') as host_since,host_location,host_about,host_response_time,
+replace(replace(host_response_rate,'N/A',''),'%','') as host_response_rate,replace(replace(host_acceptance_rate,'N/A',''),'%','') as host_acceptance_rate,host_is_superhost,host_thumbnail_url,host_picture_url,host_neighbourhood,host_listings_count::numeric  as host_listings_count,host_total_listings_count::numeric,host_verifications,host_has_profile_pic,
+host_identity_verified,neighbourhood,neighbourhood_cleansed,neighbourhood_group_cleansed,latitude::decimal,longitude::decimal,property_type,room_type,accommodates::numeric,bathrooms,(regexp_matches(coalesce(bathrooms_text,'0'),'\-?\d+\.?\d*'))[1]::numeric as bathrooms_text,bedrooms::numeric,beds::numeric,amenities,
+replace(replace(price,'$',''),',',''):: numeric as price ,minimum_nights::numeric,maximum_nights::numeric,minimum_minimum_nights::numeric,maximum_minimum_nights::numeric,minimum_maximum_nights::numeric,maximum_maximum_nights::numeric,minimum_nights_avg_ntm::numeric,maximum_nights_avg_ntm::numeric,calendar_updated,has_availability,
+availability_30 :: numeric,availability_60 :: numeric,availability_90 :: numeric,availability_365 :: numeric,to_date(calendar_last_scraped,'YYYY-MM-DD') as calendar_last_scraped ,number_of_reviews::numeric ,number_of_reviews_ltm::numeric,number_of_reviews_l30d::numeric,to_date(first_review,'YYYY-MM-DD') as first_review,to_date(last_review,'YYYY-MM-DD') as last_review,
+review_scores_rating::decimal,review_scores_accuracy::decimal,review_scores_cleanliness::decimal,review_scores_checkin::decimal,review_scores_communication::decimal,review_scores_location::decimal,review_scores_value::decimal,license,instant_bookable,calculated_host_listings_count::numeric,calculated_host_listings_count_entire_homes::numeric,calculated_host_listings_count_private_rooms::numeric,
+calculated_host_listings_count_shared_rooms::numeric,reviews_per_month::decimal
+FROM 
+    stg_l1_listings
